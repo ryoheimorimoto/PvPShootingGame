@@ -11,8 +11,8 @@ function game(spec, my) {
     var myMachineSprt;
     var enemyMachineSprt;
 
-    var myBulletSprite;
-    var enemyBulletSprite;
+    var myBulletSprite = [];
+    var enemyBulletSprite = [];
     
     var leftButtonSprt;
     var rightButtonSprt;
@@ -26,6 +26,38 @@ function game(spec, my) {
     core.rootScene.backgroundColor = "black";
 
     var count = 0;
+    
+    MyBullet = Class.create(Sprite, {
+	    initialize:function(data){
+		    Sprite.call(this, 16, 16);
+		    this.image = core.assets[PICT_PREFIX + 'bullet.png'];
+		    this.x = data.x + 24;
+		    this.y = 348;
+		    core.rootScene.addChild(this);
+		},
+		onenterframe:function(){ //enterframeイベントのイベントリスナー
+  			this.y -= 5;
+  			if (this.y < 0) {
+  				delete this;
+  			}
+		},
+	});
+	
+    EnemyBullet = Class.create(Sprite, {
+	    initialize:function(data){
+		    Sprite.call(this, 16, 16);
+		    this.image = core.assets[PICT_PREFIX + 'bullet.png'];
+		    this.x = data.x + 24;
+		    this.y = 74;
+		    core.rootScene.addChild(this);
+		},
+		onenterframe:function(){ //enterframeイベントのイベントリスナー
+  			this.y += 5;
+  			if (this.y > 480) {
+  				delete this;
+  			}
+		},
+	});
 
     preLoad();
     
@@ -47,6 +79,7 @@ function game(spec, my) {
         core.preload(PICT_PREFIX+'left.png');
         core.preload(PICT_PREFIX+'right.png');
         core.preload(PICT_PREFIX+'shoot.png');
+        core.preload(PICT_PREFIX+'bullet.png');
     }
 
     function initSprite() {
@@ -122,6 +155,7 @@ function game(spec, my) {
         shootButtonSprt.scale(1.0, 1.0);
         shootButtonSprt.addEventListener(Event.TOUCH_START,function(e){
             console.log('Shoot!!');
+            var data = {};
             data.x = myMachineSprt.x;
             data.y = 0;
             data.user = userId;
@@ -152,13 +186,13 @@ function game(spec, my) {
     	
     	if (data.user === userId) {
     		if (data.isShoot) {
-    			
+    			myBulletSprite.push(new MyBullet(data));
     		}
     	} else {
     		enemyMachineSprt.x = data.x;
     		
     		if (data.isShoot) {
-    			
+    			enemyBulletSprite.push(new EnemyBullet(data));
     		}
     	}
     	
