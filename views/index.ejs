@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title><%= title %></title>
+	<link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+	<%= title %><br>
+	<form action="/game" method="post">
+		<p>User Name<input type="text" name="userName"></p>
+		<p>Select Room ID
+			<select name="roomId" size="1">
+				<% for(var i = 0; i < 10; i++) { %>
+					<option value="<%= i %>"><%= i %></option>
+				<% } %>
+			</select>
+		</p>
+		<p><input type="submit" value="Enter"></p>
+	</form>
+</body>
+</html>
