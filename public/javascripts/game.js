@@ -36,7 +36,7 @@ function game(spec, my) {
 			this.y = 348;
 			core.rootScene.addChild(this);
 		},
-		onenterframe : function() {//enterframeイベントのイベントリスナー
+		onenterframe : function() {
 			this.y -= 5;
 			if (this.y < 0) {
 				delete this;
@@ -52,7 +52,7 @@ function game(spec, my) {
 			this.y = 74;
 			core.rootScene.addChild(this);
 		},
-		onenterframe : function() {//enterframeイベントのイベントリスナー
+		onenterframe : function() {
 			this.y += 5;
 			if (this.y > 480) {
 				delete this;
@@ -176,11 +176,6 @@ function game(spec, my) {
 		console.log('doMove!!, data : ' + data.x + ', ' + data.y);
 		emitMove(data);
 	}
-
-	var emitThrowHand;
-	core.onThrowHand = function(fnc) {
-		emitThrowHand = fnc;
-	};
 
 	core.onMove = function(data) {
 		console.log('onMove!!!' + data.user + data.x + data.y);

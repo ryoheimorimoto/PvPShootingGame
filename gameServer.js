@@ -46,22 +46,6 @@ function gameServer(spec, my) {
 			});
 		});
 
-		socket.on('Janken', function(data) {
-			var hand = data;
-			socket.get('loginInfo', function(err, data) {
-				var roomId = data.roomId;
-				var name = data.name;
-				roomArray[roomId].setHand({
-					name : name,
-					hand : hand
-				});
-				if (roomArray[roomId].isStartJanken()) {
-					var ret = roomArray[roomId].doJanken();
-					io.sockets.in(roomId).emit('Result', ret);
-				}
-			});
-		});
-
 		socket.on('disconnect', function(data) {
 			socket.get('loginInfo', function(err, data) {
 				var roomId = data.roomId;

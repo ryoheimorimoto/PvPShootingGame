@@ -23,13 +23,6 @@ window.onload = function() {
 		});
 		Game.start();
 
-		Game.onThrowHand(function(hand) {
-			if (1 === hand) {
-				console.log('seikou');
-			}
-			socket.emit('Janken', hand);
-		});
-
 		Game.doMove(function(data) {
 			console.log('Game.doMove!, ' + data.x + ':' + data.y);
 			socket.emit('doMove', data);
@@ -40,10 +33,6 @@ window.onload = function() {
 			Game.onMove(data);
 		});
 
-		socket.on('Result', function(data) {
-			console.log(data);
-			Game.emitJankenResult(data);
-		});
 	});
 
 	function getEnemyName(playerName, players) {
@@ -57,4 +46,4 @@ window.onload = function() {
 		return enemyName;
 	}
 
-}; 
+};
