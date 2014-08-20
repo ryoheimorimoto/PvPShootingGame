@@ -1,85 +1,84 @@
 var room = require('./room.js');
 
 function gameServer(spec, my) {
-    var app = spec.httpServer;
-    var logLevel = spec.logLevel || 1;
-    var io = require('socket.io').listen(app, {
-        'log level' : logLevel
-    });
-   
-    var roomArray = {};
-    for(var i = 0; i < 10; i++){
-        roomArray[i] = room();
-    }
-    
-    io.sockets.on('connection', function(socket) {
-        socket.on('EnterRoom',function(data){
-            var roomId = data.roomId;
-            var name = data.name;
-            var loginInfo = {
-                roomId : roomId,
-                name : name
-            };
-            socket.set('loginInfo',loginInfo,function(){
-                roomArray[roomId].join(name);
-                socket.join(roomId);
-                if(roomArray[roomId].isStartGame()){
-                    var ret = {
-                        players : roomArray[roomId].getPlayers()
-                    };
-                    io.sockets.in(roomId).emit('GameStart', ret);    
-                }                
-            });
-            
+	var app = spec.httpServer;
+	var logLevel = spec.logLevel || 1;
+	var io = require('socket.io').listen(app, {
+		'log level' : logLevel
+	});
 
-        });
-        
-        socket.on('doMove', function(data) {
-        	var x = data.x;
-        	var y = data.y;
-        	console.log('Move Event, x=' + x + ', y=' + y);
-        	var tempData = data;
-            
-            socket.get('loginInfo', function(err,data){
-                var roomId = data.roomId;
-                var ret = tempData;
-                io.sockets.in(roomId).emit('onMove', ret);
-            });
-        });
-        
-        socket.on('Janken',function(data){
-            var hand = data;
-            socket.get('loginInfo',function(err,data){
-                var roomId = data.roomId;
-                var name = data.name;
-                roomArray[roomId].setHand({
-                    name : name,
-                    hand : hand
-                });
-                if(roomArray[roomId].isStartJanken()){
-                    var ret = roomArray[roomId].doJanken();
-                    io.sockets.in(roomId).emit('Result', ret);
-                }
-            });
-        });
-        
-        socket.on('disconnect',function(data){
-            socket.get('loginInfo',function(err,data){
-                var roomId = data.roomId;
-                socket.leave(roomId);
-                var clients = io.sockets.clients(roomId);
-                if(clients.length === 0) {
-                    roomArray[roomId] = room();
-                } else {
-                    for(var i in clients) {
-                        clients[i].disconnect();
-                    }
-                }
-            });            
-        });
-    });
-    
-    return io;
+	var roomArray = {};
+	for (var i = 0; i < 10; i++) {
+		roomArray[i] = room();
+	}
+
+	io.sockets.on('connection', function(socket) {
+		socket.on('EnterRoom', function(data) {
+			var roomId = data.roomId;
+			var name = data.name;
+			var loginInfo = {
+				roomId : roomId,
+				name : name
+			};
+			socket.set('loginInfo', loginInfo, function() {
+				roomArray[roomId].join(name);
+				socket.join(roomId);
+				if (roomArray[roomId].isStartGame()) {
+					var ret = {
+						players : roomArray[roomId].getPlayers()
+					};
+					io.sockets.in(roomId).emit('GameStart', ret);
+				}
+			});
+
+		});
+
+		socket.on('doMove', function(data) {
+			var x = data.x;
+			var y = data.y;
+			console.log('Move Event, x=' + x + ', y=' + y);
+			var tempData = data;
+
+			socket.get('loginInfo', function(err, data) {
+				var roomId = data.roomId;
+				var ret = tempData;
+				io.sockets.in(roomId).emit('onMove', ret);
+			});
+		});
+
+		socket.on('Janken', function(data) {
+			var hand = data;
+			socket.get('loginInfo', function(err, data) {
+				var roomId = data.roomId;
+				var name = data.name;
+				roomArray[roomId].setHand({
+					name : name,
+					hand : hand
+				});
+				if (roomArray[roomId].isStartJanken()) {
+					var ret = roomArray[roomId].doJanken();
+					io.sockets.in(roomId).emit('Result', ret);
+				}
+			});
+		});
+
+		socket.on('disconnect', function(data) {
+			socket.get('loginInfo', function(err, data) {
+				var roomId = data.roomId;
+				socket.leave(roomId);
+				var clients = io.sockets.clients(roomId);
+				if (clients.length === 0) {
+					roomArray[roomId] = room();
+				} else {
+					for (var i in clients) {
+						clients[i].disconnect();
+					}
+				}
+			});
+		});
+	});
+
+	return io;
 };
 
 module.exports = gameServer;

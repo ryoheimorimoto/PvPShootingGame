@@ -25,15 +25,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', routes.index);
 app.get('/users', user.list);
-app.post('/game', routes.game);	
+app.post('/game', routes.game);
 
 var httpServer = http.createServer(app);
 httpServer.listen(app.get('port'), function() {
-    console.log('Express server listening on port ' + app.get('port'));
+	console.log('Express server listening on port ' + app.get('port'));
 });
 
 var gameServer = require('./gameServer.js');
 var GameServer = gameServer({
-    httpServer : httpServer
+	httpServer : httpServer
 });
 
