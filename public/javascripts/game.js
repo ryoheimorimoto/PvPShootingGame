@@ -124,7 +124,7 @@ function game(spec, my) {
 			data.y = 0;
 			data.user = userId;
 			data.isShoot = false;
-			execMove(data);
+			emitMove(data);
 		});
 		core.rootScene.addChild(leftButtonSprt);
 
@@ -172,11 +172,6 @@ function game(spec, my) {
 		emitMove = func;
 	};
 
-	function execMove(data) {
-		console.log('doMove!!, data : ' + data.x + ', ' + data.y);
-		emitMove(data);
-	}
-
 	core.onMove = function(data) {
 		console.log('onMove!!!' + data.user + data.x + data.y);
 
@@ -193,10 +188,6 @@ function game(spec, my) {
 		}
 
 	};
-
-	function onMove(data) {
-		console.log('onMove!!! : ' + data);
-	}
 
 	return core;
 }
