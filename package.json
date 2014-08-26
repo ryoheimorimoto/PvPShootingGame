@@ -9,7 +9,8 @@
     "express": "3.4.7",
     "ejs": "*",
     "socket.io":"0.9.5",
-    "socket.io-client" : "0.9.5"
+    "socket.io-client" : "0.9.5",
+    "chai" : "*"
   },
   "engines": {
     "node": "0.10.x"
