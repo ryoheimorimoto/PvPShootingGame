@@ -1,16 +1,21 @@
 var chai = require('../node_modules/chai/');
 
 assert = chai.assert;
-should = chai.should;
 
-suite('Array', function() {
+var gameServer = require('../gameServer.js');
+
+suite('gameServerTest', function() {
 	setup(function() {
 		//do nothing.
 	});
 
-	suite('#indexOf()', function() {
-		test('should return -1 when not present', function() {
-			assert.equal(-1, [1, 2, 3].indexOf(4));
+	suite('Constructor Test', function() {
+		test('"GameServer" Object should not be null', function() {
+			assert.equal(true, gameServer !== null);
+		});
+		
+		test('"GameServer" is fuction', function() {
+			assert.equal(typeof(gameServer), 'function');
 		});
 	});
 });
