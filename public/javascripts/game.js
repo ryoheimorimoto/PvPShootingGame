@@ -1,9 +1,10 @@
 function game(spec, my) {
 
-	var FRAME_RATE = 15; //fps
+	var FRAME_RATE = 15;
+	//fps
 	var MACHINE_MOVE_PIX = 10;
 	var BULLET_MOVE_PIX = 12;
-	
+
 	var SYNC_TIME_INTERVAL = 5;
 
 	var PICT_PREFIX = location.origin + '/images/';
@@ -23,9 +24,9 @@ function game(spec, my) {
 	var rightButtonSprt;
 	var shootButtonSprt;
 
-	// var emitFrameEvent = function() {
-	// };
-	// var emitFrame = -1;
+	var syncFrameEvent = function() {
+	};
+	var syncFrameCount = 0;
 
 	var core = new Core(320, 480);
 	core.fps = FRAME_RATE;
@@ -44,7 +45,10 @@ function game(spec, my) {
 		onenterframe : function() {
 			this.y -= BULLET_MOVE_PIX;
 			if (this.y < 0) {
-				delete this;
+				console.log("My bullet removed");
+				delete myBulletSprite[0];
+				myBulletSprite.shift();
+				core.rootScene.removeChild(this);
 			}
 		},
 	});
@@ -60,7 +64,10 @@ function game(spec, my) {
 		onenterframe : function() {
 			this.y += BULLET_MOVE_PIX;
 			if (this.y > 480) {
-				delete this;
+				console.log("Enemy bullet removed");
+				delete enemyBulletSprite[0];
+				enemyBulletSprite.shift();
+				core.rootScene.removeChild(this);
 			}
 		},
 	});
@@ -69,16 +76,34 @@ function game(spec, my) {
 
 	core.onload = function() {
 		initSprite();
-		console.log('Path 001 : ' + 'pre setInterval');
-		//setInterval(onUpdate, 33);
-
-		console.log('Path 002 : ' + 'after setInterval');
 		core.rootScene.addEventListener('enterframe', function(e) {
-			// if (core.frame === emitFrame) {
-				// emitFrameEvent();
-			// }
+			if (core.frame === syncFrameCount) {
+				syncFrameEvent();
+			}
+
+			hitTest();
 		});
 	};
+
+	function hitTest() {
+		console.log("hitTestMain");
+		for (var i = 0; i < myBulletSprite.length; i++) {
+			if (enemyMachineSprt.intersect(myBulletSprite[i])) {
+				console.log("HIT!!!!!!!!!!!");
+				enemyMachineSprt.backgroundColor = 'red';
+			} else {
+				console.log("NOT HIT!!!!!!!!!!!");
+			}
+		}
+		for (var i = 0; i < enemyBulletSprite.length; i++) {
+			if (myMachineSprt.intersect(enemyBulletSprite[i])) {
+				console.log("HIT!!!!!!!!!!!");
+				myMachineSprt.backgroundColor = 'red';
+			} else {
+				console.log("NOT HIT!!!!!!!!!!!");
+			}
+		}
+	}
 
 	function preLoad() {
 		core.preload(PICT_PREFIX + 'battleplane.png');
@@ -123,7 +148,6 @@ function game(spec, my) {
 		leftButtonSprt.scale(1.0, 1.0);
 		leftButtonSprt.addEventListener(Event.TOUCH_START, function(e) {
 			console.log('Left!!');
-			// myMachineSprt.x -= MACHINE_MOVE_PIX;
 			var data = {};
 			data.x = myMachineSprt.x;
 			data.y = 0;
@@ -182,9 +206,9 @@ function game(spec, my) {
 		if (data.user === userId) {
 			if (data.action === "shoot") {
 				myBulletSprite.push(new MyBullet(data));
-			} else if (data.action === "move.right") {			
+			} else if (data.action === "move.right") {
 				myMachineSprt.x += MACHINE_MOVE_PIX;
-			} else if (data.action === "move.left") {			
+			} else if (data.action === "move.left") {
 				myMachineSprt.x -= MACHINE_MOVE_PIX;
 			}
 		} else {
@@ -192,9 +216,9 @@ function game(spec, my) {
 
 			if (data.action === "shoot") {
 				enemyBulletSprite.push(new EnemyBullet(data));
-			} else if (data.action === "move.right") {			
+			} else if (data.action === "move.right") {
 				enemyMachineSprt.x += MACHINE_MOVE_PIX;
-			} else if (data.action === "move.left") {			
+			} else if (data.action === "move.left") {
 				enemyMachineSprt.x -= MACHINE_MOVE_PIX;
 			}
 		}
