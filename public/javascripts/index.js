@@ -23,14 +23,14 @@ window.onload = function() {
 		});
 		Game.start();
 
-		Game.doMove(function(data) {
-			console.log('Game.doMove!, ' + data.x + ':' + data.y);
-			socket.emit('doMove', data);
+		Game.doAction(function(data) {
+			console.log('Game.doAction!, ' + data.x + ':' + data.y);
+			socket.emit('doAction', data);
 		});
 
-		socket.on('onMove', function(data) {
-			console.log('onMove!!, data = ' + data.x + ':' + data.y);
-			Game.onMove(data);
+		socket.on('onAction', function(data) {
+			console.log('onAction!!, data = ' + data.x + ':' + data.y);
+			Game.onAction(data);
 		});
 
 	});

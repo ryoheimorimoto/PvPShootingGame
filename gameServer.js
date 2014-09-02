@@ -33,16 +33,17 @@ function gameServer(spec, my) {
 
 		});
 
-		socket.on('doMove', function(data) {
+		socket.on('doAction', function(data) {
 			var x = data.x;
 			var y = data.y;
-			console.log('Move Event, x=' + x + ', y=' + y);
+			var action = data.action;
+			console.log('Move Event, x=' + x + ', y=' + y, ", action = " + action);
 			var tempData = data;
 
 			socket.get('loginInfo', function(err, data) {
 				var roomId = data.roomId;
 				var ret = tempData;
-				io.sockets.in(roomId).emit('onMove', ret);
+				io.sockets.in(roomId).emit('onAction', ret);
 			});
 		});
 

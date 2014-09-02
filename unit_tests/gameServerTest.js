@@ -19,9 +19,5 @@ suite('gameServerTest', function() {
 			assert.equal(typeof(gameServer), 'function');
 		});
 		
-		test('"socket" is object', function() {
-			var sockets = gameServer.sockets;
-			assert.equal(typeof(sockets), 'object');
-		});
 	});
 });

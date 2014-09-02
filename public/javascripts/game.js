@@ -1,7 +1,12 @@
 function game(spec, my) {
-	var PICT_PREFIX = location.origin + '/images/';
 
+	var FRAME_RATE = 15; //fps
 	var MACHINE_MOVE_PIX = 10;
+	var BULLET_MOVE_PIX = 12;
+	
+	var SYNC_TIME_INTERVAL = 5;
+
+	var PICT_PREFIX = location.origin + '/images/';
 
 	var playerName = spec.playerName;
 	var enemyName = spec.enemyName;
@@ -18,12 +23,12 @@ function game(spec, my) {
 	var rightButtonSprt;
 	var shootButtonSprt;
 
-	var emitFrameEvent = function() {
-	};
-	var emitFrame = -1;
+	// var emitFrameEvent = function() {
+	// };
+	// var emitFrame = -1;
 
 	var core = new Core(320, 480);
-	core.fps = 30;
+	core.fps = FRAME_RATE;
 	core.rootScene.backgroundColor = "black";
 
 	var count = 0;
@@ -37,7 +42,7 @@ function game(spec, my) {
 			core.rootScene.addChild(this);
 		},
 		onenterframe : function() {
-			this.y -= 5;
+			this.y -= BULLET_MOVE_PIX;
 			if (this.y < 0) {
 				delete this;
 			}
@@ -53,7 +58,7 @@ function game(spec, my) {
 			core.rootScene.addChild(this);
 		},
 		onenterframe : function() {
-			this.y += 5;
+			this.y += BULLET_MOVE_PIX;
 			if (this.y > 480) {
 				delete this;
 			}
@@ -69,9 +74,9 @@ function game(spec, my) {
 
 		console.log('Path 002 : ' + 'after setInterval');
 		core.rootScene.addEventListener('enterframe', function(e) {
-			if (core.frame === emitFrame) {
-				emitFrameEvent();
-			}
+			// if (core.frame === emitFrame) {
+				// emitFrameEvent();
+			// }
 		});
 	};
 
@@ -118,13 +123,13 @@ function game(spec, my) {
 		leftButtonSprt.scale(1.0, 1.0);
 		leftButtonSprt.addEventListener(Event.TOUCH_START, function(e) {
 			console.log('Left!!');
-			myMachineSprt.x -= MACHINE_MOVE_PIX;
+			// myMachineSprt.x -= MACHINE_MOVE_PIX;
 			var data = {};
 			data.x = myMachineSprt.x;
 			data.y = 0;
 			data.user = userId;
-			data.isShoot = false;
-			emitMove(data);
+			data.action = "move.left";
+			emitAction(data);
 		});
 		core.rootScene.addChild(leftButtonSprt);
 
@@ -137,13 +142,12 @@ function game(spec, my) {
 		rightButtonSprt.scale(1.0, 1.0);
 		rightButtonSprt.addEventListener(Event.TOUCH_START, function(e) {
 			console.log('Right!!');
-			myMachineSprt.x += MACHINE_MOVE_PIX;
 			var data = {};
 			data.x = myMachineSprt.x;
 			data.y = 0;
 			data.user = userId;
-			data.isShoot = false;
-			emitMove(data);
+			data.action = "move.right";
+			emitAction(data);
 		});
 		core.rootScene.addChild(rightButtonSprt);
 
@@ -160,30 +164,38 @@ function game(spec, my) {
 			data.x = myMachineSprt.x;
 			data.y = 0;
 			data.user = userId;
-			data.isShoot = true;
-			emitMove(data);
+			data.action = "shoot";
+			emitAction(data);
 		});
 		core.rootScene.addChild(shootButtonSprt);
 
 	}
 
-	var emitMove;
-	core.doMove = function(func) {
-		emitMove = func;
+	var emitAction;
+	core.doAction = function(func) {
+		emitAction = func;
 	};
 
-	core.onMove = function(data) {
-		console.log('onMove!!!' + data.user + data.x + data.y);
+	core.onAction = function(data) {
+		console.log('onAction!!!' + data.user + data.x + data.y);
 
 		if (data.user === userId) {
-			if (data.isShoot) {
+			if (data.action === "shoot") {
 				myBulletSprite.push(new MyBullet(data));
+			} else if (data.action === "move.right") {			
+				myMachineSprt.x += MACHINE_MOVE_PIX;
+			} else if (data.action === "move.left") {			
+				myMachineSprt.x -= MACHINE_MOVE_PIX;
 			}
 		} else {
 			enemyMachineSprt.x = data.x;
 
-			if (data.isShoot) {
+			if (data.action === "shoot") {
 				enemyBulletSprite.push(new EnemyBullet(data));
+			} else if (data.action === "move.right") {			
+				enemyMachineSprt.x += MACHINE_MOVE_PIX;
+			} else if (data.action === "move.left") {			
+				enemyMachineSprt.x -= MACHINE_MOVE_PIX;
 			}
 		}
 
