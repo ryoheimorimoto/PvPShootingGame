@@ -5,10 +5,8 @@ window.onload = function() {
 	var userName;
 	var Game;
 	socket = io.connect(location.origin);
-	roomId = $("meta[name=roomId]").attr('content');
-	userName = $("meta[name=userName]").attr('content');
-
-	console.log('userName : ' + userName);
+	roomId = $('meta[name=roomId]').attr('content');
+	userName = $('meta[name=userName]').attr('content');
 
 	socket.emit('EnterRoom', {
 		roomId : roomId,
@@ -24,12 +22,10 @@ window.onload = function() {
 		Game.start();
 
 		Game.doAction(function(data) {
-			console.log('Game.doAction!, ' + data.x + ':' + data.y);
 			socket.emit('doAction', data);
 		});
 
 		socket.on('onAction', function(data) {
-			console.log('onAction!!, data = ' + data.x + ':' + data.y);
 			Game.onAction(data);
 		});
 

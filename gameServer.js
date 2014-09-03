@@ -37,7 +37,7 @@ function gameServer(spec, my) {
 			var x = data.x;
 			var y = data.y;
 			var action = data.action;
-			console.log('Move Event, x=' + x + ', y=' + y, ", action = " + action);
+			console.log('action, x=' + x + ', y=' + y, ', action = ' + action);
 			var tempData = data;
 
 			socket.get('loginInfo', function(err, data) {
