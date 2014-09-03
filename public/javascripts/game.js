@@ -112,31 +112,30 @@ function game(spec, my) {
 		core.preload(PICT_PREFIX + 'shoot.png');
 		core.preload(PICT_PREFIX + 'bullet.png');
 	}
+	
+	function createMachineSprt(x, y, width, height, resource, scale, rotation) {
+		var machineSprt = new Sprite(width, height);
+		machineSprt.x = x;
+		machineSprt.y = y;
+		machineSprt.image = resource;
+		machineSprt.frame = 0;
+		machineSprt.scale(scale, scale);
+		machineSprt.rotation = rotation;
+		machineSprt.addEventListener('enterframe', function(e) {
+			//TODO
+		});
+		return machineSprt;
+	}
+	
+	function createButtonSprt(x, y, width, height, resource, scale, actionName) {
+		
+	}
 
 	function initSprite() {
-		//My Machine
-		myMachineSprt = new Sprite(64, 64);
-		myMachineSprt.image = core.assets[PICT_PREFIX + 'battleplane.png'];
-		myMachineSprt.frame = 0;
-		myMachineSprt.x = 128;
-		myMachineSprt.y = 348;
-		myMachineSprt.scale(1.0, 1.0);
-		myMachineSprt.addEventListener('enterframe', function(e) {
-			//TODO
-		});
+		myMachineSprt = createMachineSprt(128, 348, 64, 64, core.assets[PICT_PREFIX + 'battleplane.png'], 1.0, 0);
 		core.rootScene.addChild(myMachineSprt);
 
-		//Enemy Machine
-		enemyMachineSprt = new Sprite(64, 64);
-		enemyMachineSprt.image = core.assets[PICT_PREFIX + 'battleplane.png'];
-		enemyMachineSprt.frame = 1;
-		enemyMachineSprt.rotation = 180;
-		enemyMachineSprt.x = 128;
-		enemyMachineSprt.y = 10;
-		enemyMachineSprt.scale(1.0, 1.0);
-		enemyMachineSprt.addEventListener(Event.TOUCH_START, function(e) {
-			//TODO
-		});
+		enemyMachineSprt = createMachineSprt(128, 10, 64, 64, core.assets[PICT_PREFIX + 'battleplane.png'], 1.0, 180);
 		core.rootScene.addChild(enemyMachineSprt);
 
 		//left button
