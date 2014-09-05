@@ -30,7 +30,6 @@ function gameServer(spec, my) {
 					io.sockets.in(roomId).emit('GameStart', ret);
 				}
 			});
-
 		});
 
 		socket.on('doAction', function(data) {
