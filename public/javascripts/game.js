@@ -1,4 +1,4 @@
-function game(spec, my) {
+function game(spec) {
 
 	var SCREEN_WIDTH = 320;
 	var SCREEN_HEIGHT = 480;
@@ -32,6 +32,8 @@ function game(spec, my) {
 	var core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT);
 	core.fps = FRAME_RATE;
 	core.rootScene.backgroundColor = 'black';
+	var shootingScene = new Scene();
+	core.pushScene(shootingScene);
 
 	var count = 0;
 
@@ -41,14 +43,14 @@ function game(spec, my) {
 			this.image = core.assets[PICT_PREFIX + 'bullet.png'];
 			this.x = data.x + 24;
 			this.y = 348;
-			core.rootScene.addChild(this);
+			shootingScene.addChild(this);
 		},
 		onenterframe : function() {
 			this.y -= BULLET_MOVE_PIX;
 			if (this.y < 0) {
 				delete myBulletSprt[0];
 				myBulletSprt.shift();
-				core.rootScene.removeChild(this);
+				shootingScene.removeChild(this);
 			}
 		},
 	});
@@ -59,14 +61,14 @@ function game(spec, my) {
 			this.image = core.assets[PICT_PREFIX + 'bullet.png'];
 			this.x = data.x + 24;
 			this.y = 74;
-			core.rootScene.addChild(this);
+			shootingScene.addChild(this);
 		},
 		onenterframe : function() {
 			this.y += BULLET_MOVE_PIX;
 			if (this.y > 480) {
 				delete enemyBulletSprt[0];
 				enemyBulletSprt.shift();
-				core.rootScene.removeChild(this);
+				shootingScene.removeChild(this);
 			}
 		},
 	});
@@ -75,7 +77,7 @@ function game(spec, my) {
 
 	core.onload = function() {
 		initSprite();
-		core.rootScene.addEventListener('enterframe', function(e) {
+		shootingScene.addEventListener('enterframe', function(e) {
 			if (core.frame === syncFrameCount) {
 				syncFrameEvent();
 			}
@@ -88,6 +90,7 @@ function game(spec, my) {
 		for (var i = 0; i < myBulletSprt.length; i++) {
 			if (enemyMachineSprt.intersect(myBulletSprt[i])) {
 				enemyMachineSprt.backgroundColor = 'red';
+				moveScene();
 			} else {
 				//do nothing
 			}
@@ -95,12 +98,18 @@ function game(spec, my) {
 		for (var i = 0; i < enemyBulletSprt.length; i++) {
 			if (myMachineSprt.intersect(enemyBulletSprt[i])) {
 				myMachineSprt.backgroundColor = 'red';
+				moveScene();
 			} else {
 				//do nothing
 			}
 		}
 	}
-
+	
+	var moveScene;
+	core.moveScene = function(func) {
+		moveScene = func;
+	};
+	
 	function preLoad() {
 		core.preload(PICT_PREFIX + 'battleplane.png');
 		core.preload(PICT_PREFIX + 'left.png');
@@ -143,19 +152,19 @@ function game(spec, my) {
 
 	function initSprite() {
 		myMachineSprt = createMachineSprt(128, 348, 64, 64, core.assets[PICT_PREFIX + 'battleplane.png'], 1.0, 0);
-		core.rootScene.addChild(myMachineSprt);
+		shootingScene.addChild(myMachineSprt);
 
 		enemyMachineSprt = createMachineSprt(128, 10, 64, 64, core.assets[PICT_PREFIX + 'battleplane.png'], 1.0, 180);
-		core.rootScene.addChild(enemyMachineSprt);
+		shootingScene.addChild(enemyMachineSprt);
 
 		leftButtonSprt = createButtonSprt(32, 420, 32, 32, core.assets[PICT_PREFIX + 'left.png'], 1.0, 'move.left');
-		core.rootScene.addChild(leftButtonSprt);
+		shootingScene.addChild(leftButtonSprt);
 
 		rightButtonSprt = createButtonSprt(256, 420, 32, 32, core.assets[PICT_PREFIX + 'right.png'], 1.0, 'move.right');
-		core.rootScene.addChild(rightButtonSprt);
+		shootingScene.addChild(rightButtonSprt);
 
 		shootButtonSprt = createButtonSprt(96, 420, 128, 32, core.assets[PICT_PREFIX + 'shoot.png'], 1.0, 'shoot');
-		core.rootScene.addChild(shootButtonSprt);
+		shootingScene.addChild(shootButtonSprt);
 	}
 
 	var emitAction;

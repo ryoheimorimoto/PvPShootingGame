@@ -17,3 +17,9 @@ exports.game = function(req, res) {
         roomId : roomId
     });
 }; 
+
+exports.finish = function(req, res) {
+    res.render('finish', {
+        title : 'node.jsでゲームを作ってみる。番外編',
+    });
+}; 

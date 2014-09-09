@@ -25,6 +25,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.get('/', routes.index);
 app.get('/users', user.list);
 app.post('/game', routes.game);
+app.get('/finish', routes.finish);
 
 var httpServer = http.createServer(app);
 httpServer.listen(app.get('port'), function() {
