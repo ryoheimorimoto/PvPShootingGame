@@ -9,7 +9,7 @@ function gameServer(spec, my) {
 
 	var roomArray = {};
 	for (var i = 0; i < 10; i++) {
-		roomArray[i] = room();
+		(roomArray[i] = room()).setMaxPlayerNum(2);
 	}
 
 	io.sockets.on('connection', function(socket) {

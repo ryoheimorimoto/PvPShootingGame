@@ -1,25 +1,35 @@
 function room() {
-	var that = {};
+	var room = {};
 	var inPlayers = [];
+	var maxPlayerNum;
 
-	that.join = function(name) {
+	room.join = function(name) {
 		inPlayers.push(name);
 	};
 
-	that.isStartGame = function() {
-		if (inPlayers.length === 2) {
+	room.setMaxPlayerNum = function(num) {
+		maxPlayerNum = num;
+	};
+
+	room.getMaxPlayerNum = function() {
+		return maxPlayerNum;
+	};
+
+	room.isStartGame = function() {
+		if (inPlayers.length === maxPlayerNum) {
 			return true;
 		} else {
+			//TODO behavior of overflow. should throw exception?
 			return false;
 		}
 	};
 
-	that.getPlayers = function() {
+	room.getPlayers = function() {
 		inPlayers.sort();
 		return inPlayers;
 	};
 
-	return that;
+	return room;
 }
 
-module.exports = room; 
+module.exports = room;

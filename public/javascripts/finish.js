@@ -2,11 +2,16 @@ enchant();
 window.onload = function() {
 
 	var PICT_PREFIX = location.origin + '/images/';
-	
+
 	var game = new Game(480, 480);
 	game.fps = 60;
 
+	var testCount = 0;
 	game.preload(PICT_PREFIX + 'tex.jpg');
+	// game.preload(PICT_PREFIX + 'F15C/F-15C_Eagle.dae');
+	game.preload(PICT_PREFIX + 'droid.dae');
+	// game.preload(PICT_PREFIX + 'Boeing747/Boeing747.dae');
+	// game.preload(PICT_PREFIX + 'Galaxy/galaxy.dae');
 
 	var directionX = 1;
 	var directionY = 1;
@@ -21,10 +26,29 @@ window.onload = function() {
 
 	game.onload = function() {
 		var scene = new Scene3D();
+
+		var droid = Sprite3D();
+		droid.set(game.assets[PICT_PREFIX + 'droid.dae']);
+		droid.x = 0;
+		droid.y = 0;
+		droid.scaleX = 0.5;
+		droid.scaleY = 0.5;
+		droid.scaleZ = 0.5;
+		scene.addChild(droid);
+
+		// var machine = Sprite3D();
+		// // machine.set(game.assets[PICT_PREFIX + 'F15C/F-15C_Eagle.dae']);
+		// machine.set(game.assets[PICT_PREFIX + 'Boeing747/Boeing747.dae']);
+		// machine.x = -0.5;
+		// machine.y = 0.5;
+		// machine.scaleX = 3;
+		// machine.scaleY = 3;
+		// machine.scaleZ = 3;
+		// scene.addChild(machine);
+
 		var sphere = new Sphere(0.3);
 		sphere.x = -1.5;
 		sphere.y = -0.6;
-
 		sphere.mesh.texture.src = game.assets[PICT_PREFIX + 'tex.jpg'];
 
 		scene.addChild(sphere);
@@ -87,13 +111,35 @@ window.onload = function() {
 		var light = new DirectionalLight();
 		light.count = 0;
 
-		this.addEventListener(Event.ENTER_FRAME, function() {++light.count;
-			var urad = Math.PI * light.count / 97;
-			light.directionX = Math.sin(urad);
-			light.directionY = Math.cos(urad);
-			light.color = [Math.sin(urad), Math.cos(urad), 0.5];
+		// this.addEventListener(Event.ENTER_FRAME, function() {++light.count;
+		// var urad = Math.PI * light.count / 97;
+		// light.directionX = Math.sin(urad);
+		// light.directionY = Math.cos(urad);
+		// light.color = [Math.sin(urad), Math.cos(urad), 0.5];
+		// });
+
+		this.addEventListener('enterframe', function() {
+			if (game.input.up) {
+				this.testCount++;
+				console.log("Up");
+			}
+			if (game.input.down) {
+				this.testCount--;
+				console.log("Down");
+			}
+			if (game.input.right) {
+				console.log("Right");
+			}
+			if (game.input.left) {
+				console.log("Up");
+			}
+
+			var rot = Math.PI * this.count / this.factor;
+			this.rotation = [1, 0, 0, 0, 0, Math.cos(rot), -Math.sin(rot), 0, 0, Math.sin(rot), Math.cos(rot), 0, 0, 0, 0, 1];
 		});
+
 		scene.setDirectionalLight(light);
+
 	};
 	game.start();
 

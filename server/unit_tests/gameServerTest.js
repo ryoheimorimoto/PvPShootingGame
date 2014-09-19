@@ -1,6 +1,4 @@
-var chai = require('../node_modules/chai/');
-
-assert = chai.assert;
+var assert = require('assert');
 
 var gameServer = require('../gameServer.js');
 
