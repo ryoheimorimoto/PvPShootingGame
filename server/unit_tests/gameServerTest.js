@@ -7,15 +7,13 @@ suite('gameServerTest', function() {
 		//do nothing.
 	});
 
-	suite('Constructor Test', function() {
-		test('"GameServer" Object must not be null', function() {
-			assert.equal(true, gameServer !== undefined);
-			assert.equal(true, gameServer !== null);
-		});
-		
-		test('"GameServer" is fuction', function() {
-			assert.equal(typeof(gameServer), 'function');
-		});
-		
+	test('"GameServer" Object must not be null', function() {
+		assert.equal(true, gameServer !== undefined);
+		assert.equal(true, gameServer !== null);
 	});
+
+	test('"GameServer" is fuction', function() {
+		assert.equal( typeof (gameServer), 'function');
+	});
+
 });
