@@ -168,6 +168,7 @@ function game(spec) {
 	}
 
 	var emitAction;
+
 	core.doAction = function(func) {
 		emitAction = func;
 	};
@@ -191,7 +192,8 @@ function game(spec) {
 				enemyMachineSprt.x -= MACHINE_MOVE_PIX;
 			}
 		}
-	};
+	}; 
+
 
 	return core;
 }
