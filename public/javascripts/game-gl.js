@@ -6,6 +6,7 @@ function game(spec) {
 
 	var RES_PATH_DROID = '../images/droid.dae';
 	var RES_BACKGROUND_TEXTURE = '../images/tex.jpg';
+	var RES_PATH_SHOOT_BUTTON = '../images/shoot.png';
 
 	var game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT);
 	game.fps = FRAME_RATE;
@@ -14,6 +15,10 @@ function game(spec) {
 	var scene;
 	var droid;
 	var stage;
+	var ball;
+	var shootButton;
+
+	var ballList = [];
 
 	var isOnTouch = false;
 
@@ -26,12 +31,58 @@ function game(spec) {
 			this.y = y;
 			this.z = z;
 			scene.addChild(this);
+		},
+		ontouchstart : function() {
+			console.log("touch!!!");
+			new BallSprite(droid.x, droid.y + 1.0, droid.z);
+		}
+	});
+
+	ButtonSprite = Class.create(Sprite3D, {
+		initialize : function(x, y, z, resPath) {
+			Sprite3D.call(this);
+			this.set(game.assets[resPath]);
+			this.noToon = false;
+			this.x = x;
+			this.y = y;
+			this.z = z;
+			scene.addChild(this);
+		}
+	});
+
+	BallSprite = Class.create(Sphere, {
+		initialize : function(x, y, z) {
+			Sphere.call(this);
+			this.x = x;
+			this.y = y;
+			this.z = z;
+			this.scale(0.1, 0.1, 0.1);
+			this.mesh.setBaseColor([0.2, 0.2, 1.0, 1.0]);
+			scene.addChild(this);
+			this.noToon = false;
+			this.frameCount = 0;
+		},
+		onenterframe : function() {
+			this.frameCount++;
+			if (this.intersect(droid)) {
+				// droid.forward(-droid.v * 0.5);
+				// droid.v = 0;
+				if (this.frameCount > FRAME_RATE) {
+					this.mesh.setBaseColor([1.0, 0.0, 0.0, 1.0]);
+				}
+			}
+			this.forward(0.05);
 		}
 	});
 
 	game.onload = function() {
 		scene = new Scene3D();
-		scene.setDirectionalLight(new DirectionalLight());
+
+		var light = new DirectionalLight();
+		light.directionZ = 0;
+		light.color = [1.0, 1.0, 1.0];
+		scene.setDirectionalLight(light);
+
 		scene.setCamera(new Camera3D());
 
 		droid = new DroidSprite(0, -0.5, 0);
@@ -53,10 +104,8 @@ function game(spec) {
 		});
 		game.rootScene.addEventListener('touchmove', function(e) {
 
-			//フリックのX移動量に応じて方向転換
 			droid.rotateYaw(-(e.x - tmpEv.x) * 0.02);
 
-			//フリックのY移動量に応じて速度を増す
 			droid.v += -(e.y - tmpEv.y) * 0.1;
 			if (droid.v > 5)
 				droid.v = 5;
@@ -68,12 +117,10 @@ function game(spec) {
 		camera = scene.getCamera();
 		camera.y = 0;
 		game.rootScene.addEventListener('enterframe', function(e) {
-			//droidを前進させる
 			if (isOnTouch) {
 				droid.forward(droid.v * 0.07);
 			}
 
-			//キーボード操作にも対応
 			if (game.input.left) {
 				droid.rotateYaw(0.05);
 			}
@@ -101,13 +148,12 @@ function game(spec) {
 			if (droid.z > 30)
 				droid.rotateYaw(Math.PI * 0.52);
 
-			//droidをカメラが追いかける
 			camera.chase(droid, -20, 10);
-
-			//droidをカメラが見る
 			camera.lookAt(droid);
-			camera.y = 4;
+			camera.y = 5;
 		});
+
+		// shootButton = new ButtonSprite(0, -0.5, 0, RES_PATH_SHOOT_BUTTON);
 	};
 
 	game.moveScene = function(func) {
