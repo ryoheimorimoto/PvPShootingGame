@@ -90,7 +90,7 @@ function game(spec) {
 		for (var i = 0; i < myBulletSprt.length; i++) {
 			if (enemyMachineSprt.intersect(myBulletSprt[i])) {
 				enemyMachineSprt.backgroundColor = 'red';
-				moveScene();
+				// moveScene();
 			} else {
 				//do nothing
 			}
@@ -98,7 +98,7 @@ function game(spec) {
 		for (var i = 0; i < enemyBulletSprt.length; i++) {
 			if (myMachineSprt.intersect(enemyBulletSprt[i])) {
 				myMachineSprt.backgroundColor = 'red';
-				moveScene();
+				// moveScene();
 			} else {
 				//do nothing
 			}
