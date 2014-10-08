@@ -5,40 +5,34 @@ function game(spec) {
 	var FRAME_RATE = 30;
 
 	var STAGE_GROUND_WIDTH = 80;
-	var STAGE_W = 80;
 
-	var RES_PATH_DROID = '../images/droid.dae';
-	var RES_BACKGROUND_TEXTURE = '../images/ground.jpg';
-	var RES_WALL_TEXTURE = '../images/wall.jpg';
-	var RES_PATH_SHOOT_BUTTON = '../images/shoot.png';
+	var RES_DROID = '../images/droid.dae';
+	var RES_TEXTURE_GROUND = '../images/ground.jpg';
 
 	var game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT);
 	game.fps = FRAME_RATE;
-	game.preload(RES_PATH_DROID);
+	game.preload(RES_DROID);
+	game.preload(RES_TEXTURE_GROUND);
 	game.keybind(' '.charCodeAt(0), 'shoot');
 
 	var userId = Math.random();
-
 	var scene;
 	var light;
 	var camera;
 	var myDroid;
-	var stage;
-	var tmpEv;
-
 	var enemyDroid;
+	var stage;
 
-	var screenRotation = 0;
+	var lastEvent;
+	var downPoint = {};
 
 	var isOnTouch = false;
 	var isOnShoot = false;
 
-	var downPoint = {};
-
 	DroidSprite = Class.create(Sprite3D, {
 		initialize : function(x, y, z) {
 			Sprite3D.call(this);
-			this.set(game.assets[RES_PATH_DROID]);
+			this.set(game.assets[RES_DROID]);
 			this.noToon = false;
 			this.x = x;
 			this.y = y;
@@ -46,8 +40,6 @@ function game(spec) {
 			scene.addChild(this);
 		},
 		ontouchstart : function(e) {
-			// tmpEv = e;
-			// isOnTouch = true;
 			downPoint.x = e.x;
 			downPoint.y = e.y;
 		},
@@ -56,9 +48,9 @@ function game(spec) {
 				emitShootEvent();
 			}
 			myDroid.v = 0;
-			// isOnTouch = false;
 		},
 		ontouchmove : function(e) {
+			//moved to global event.
 		},
 		onenterframe : function() {
 			if (isOnTouch) {
@@ -68,11 +60,9 @@ function game(spec) {
 
 			if (game.input.left) {
 				emitRotate(0.05);
-				// myDroid.rotateYaw(0.05);
 			}
 			if (game.input.right) {
 				emitRotate(-0.05);
-				// myDroid.rotateYaw(-0.05);
 			}
 			if (game.input.up) {
 				myDroid.forward(myDroid.v * 0.07);
@@ -101,9 +91,8 @@ function game(spec) {
 				}
 
 			}
-			
-			boundByWall(this);
 
+			boundByWall(this);
 			camera.chase(myDroid, -20, 10);
 			camera.lookAt(myDroid);
 			camera.y = 3;
@@ -113,7 +102,7 @@ function game(spec) {
 	EnemyDroidSprite = Class.create(Sprite3D, {
 		initialize : function(x, y, z) {
 			Sprite3D.call(this);
-			this.set(game.assets[RES_PATH_DROID]);
+			this.set(game.assets[RES_DROID]);
 			this.noToon = false;
 			this.x = x;
 			this.y = y;
@@ -150,8 +139,6 @@ function game(spec) {
 				console.log('HIT!!!');
 				this.mesh.setBaseColor([1.0, 0.0, 0.0, 1.0]);
 			}
-			// this.forward(0.5);
-
 			boundByWall(this);
 		}
 	});
@@ -182,8 +169,6 @@ function game(spec) {
 				console.log('HIT!!!');
 				this.mesh.setBaseColor([1.0, 0.0, 0.0, 1.0]);
 			}
-			// this.forward(0.5);
-
 			boundByWall(this);
 		}
 	});
@@ -192,8 +177,6 @@ function game(spec) {
 		scene = new Scene3D();
 
 		light = new DirectionalLight();
-		// light.directionX = myDroid.x;
-		// light.directionY = myDroid.y;
 		light.directionZ = 0;
 		light.color = [1.0, 1.0, 1.0];
 		scene.setDirectionalLight(light);
@@ -210,7 +193,7 @@ function game(spec) {
 		createStage();
 
 		game.rootScene.addEventListener('touchstart', function(e) {
-			tmpEv = e;
+			lastEvent = e;
 			isOnTouch = true;
 		});
 		game.rootScene.addEventListener('touchend', function(e) {
@@ -218,23 +201,21 @@ function game(spec) {
 			isOnTouch = false;
 		});
 		game.rootScene.addEventListener('touchmove', function(e) {
-			myDroid.rotateYaw(-(e.x - tmpEv.x) * 0.02);
+			myDroid.rotateYaw(-(e.x - lastEvent.x) * 0.02);
 
-			myDroid.v += -(e.y - tmpEv.y) * 0.1;
+			myDroid.v += -(e.y - lastEvent.y) * 0.1;
 			if (myDroid.v > 5)
 				myDroid.v = 5;
 			if (myDroid.v < 0.1)
 				myDroid.v = 0.1;
-			tmpEv = e;
+			lastEvent = e;
 		});
 
 		camera = scene.getCamera();
 		camera.y = 0;
 		game.rootScene.addEventListener('enterframe', function(e) {
-
+			//do nothing
 		});
-
-		// shootButton = new ButtonSprite(0, -0.5, 0, RES_PATH_SHOOT_BUTTON);
 	};
 
 	game.moveScene = function(func) {
@@ -265,7 +246,6 @@ function game(spec) {
 				enemyDroid.z = data.z * -1;
 			}
 		}
-
 	};
 
 	function emitShootEvent() {
@@ -307,35 +287,18 @@ function game(spec) {
 
 	}
 
-	function calculateScreenRotation(rotationDiff) {
-
-	}
-
 	function createStage() {
-		//Ground
 		for (var y = -5; y < 5; y++) {
 			for (var x = -5; x < 5; x++) {
 				var ground = new PlaneXZ();
 				ground.y = -0.5;
 				ground.x = (x * STAGE_GROUND_WIDTH / 10) + STAGE_GROUND_WIDTH / 20;
 				ground.z = (y * STAGE_GROUND_WIDTH / 10) + STAGE_GROUND_WIDTH / 20;
-				ground.mesh.texture = new Texture(RES_BACKGROUND_TEXTURE);
+				ground.mesh.texture = new Texture(RES_TEXTURE_GROUND);
 				ground.scale(STAGE_GROUND_WIDTH / 10, 1, STAGE_GROUND_WIDTH / 10);
 				scene.addChild(ground);
 			}
 		}
-
-		//Wall
-		// var wall = new PlaneXY();
-		// wall.x = (STAGE_GROUND_WIDTH / 10) + STAGE_GROUND_WIDTH / 20;
-		// wall.z = (STAGE_GROUND_WIDTH / 10) + STAGE_GROUND_WIDTH / 20;
-		// wall.y = -0.5;
-		// wall.mesh.texture = new Texture(RES_WALL_TEXTURE);
-		// this.mesh.setBaseColor([1.0, 1.0, 1.0, 1.0]);
-		// wall.ambient = [0.8, 0.8, 0.8, 1.0];
-		// wall.shiness = 1;
-		// wall.scale(STAGE_GROUND_WIDTH / 10, STAGE_GROUND_WIDTH / 10, STAGE_GROUND_WIDTH / 10);
-		// scene.addChild(wall);
 	}
 
 	function boundByWall(obj) {
