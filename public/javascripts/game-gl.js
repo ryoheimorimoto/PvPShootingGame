@@ -28,6 +28,8 @@ function game(spec) {
 
 	var isOnTouch = false;
 	var isOnShoot = false;
+	
+	var ballCount = 0;
 
 	DroidSprite = Class.create(Sprite3D, {
 		initialize : function(x, y, z) {
@@ -136,7 +138,7 @@ function game(spec) {
 			var dist = this.bounding.toBounding(myDroid.bounding);
 			var distEnemy = this.bounding.toBounding(enemyDroid.bounding);
 			if (dist < 2.0 || distEnemy < 2.0) {
-				console.log('HIT!!!');
+				// console.log('HIT!!!');
 				this.mesh.setBaseColor([1.0, 0.0, 0.0, 1.0]);
 			}
 			boundByWall(this);
@@ -166,7 +168,7 @@ function game(spec) {
 		onenterframe : function() {
 			var dist = this.bounding.toBounding(myDroid.bounding);
 			if (dist < 2.0) {
-				console.log('HIT!!!');
+				// console.log('HIT!!!');
 				this.mesh.setBaseColor([1.0, 0.0, 0.0, 1.0]);
 			}
 			boundByWall(this);
@@ -228,19 +230,19 @@ function game(spec) {
 	};
 
 	game.onAction = function(data) {
-		console.log('onAction!');
+		// console.log('onAction!');
 
 		if (data.user === userId) {
 			//TODO
 		} else {
 			if (data.action === 'shoot') {
-				console.log('Enemy Shoot!');
+				// console.log('Enemy Shoot!');
 				new EnemyBallSprite(enemyDroid.x, enemyDroid.y + 1.0, enemyDroid.z);
 			} else if (data.action === 'rotate') {
-				console.log('Enemy Rotate!');
+				// console.log('Enemy Rotate!');
 				enemyDroid.rotateYaw(data.value);
 			} else if (data.action === 'forward') {
-				console.log('Enemy Forward!');
+				// console.log('Enemy Forward!');
 				enemyDroid.x = data.x * -1;
 				enemyDroid.y = data.y;
 				enemyDroid.z = data.z * -1;
@@ -250,6 +252,9 @@ function game(spec) {
 
 	function emitShootEvent() {
 		new BallSprite(myDroid.x, myDroid.y + 1.0, myDroid.z);
+		
+		ballCount++;
+		console.log('Ballは' + ballCount + '個');
 
 		var data = {};
 		data.x = myDroid.x;
